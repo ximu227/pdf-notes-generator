@@ -51,15 +51,24 @@ tailwind.config = {
 ```javascript
 function renderMD(text) {
   if (!text) return '';
+  // 先提取并渲染 LaTeX（避免 marked 把 < > 转义为 &lt; &gt;）
+  const mathBlocks = [];
+  text = text.replace(/\$\$([\s\S]+?)\$\$/g, (m, tex) => {
+    try {
+      mathBlocks.push('<div>' + katex.renderToString(tex, {throwOnError:false, displayMode:true}) + '</div>');
+      return `@@MATH${mathBlocks.length-1}@@`;
+    } catch(e){ return m; }
+  });
+  text = text.replace(/\$([^\$\n]+?)\$/g, (m, tex) => {
+    try {
+      mathBlocks.push(katex.renderToString(tex, {throwOnError:false}));
+      return `@@MATH${mathBlocks.length-1}@@`;
+    } catch(e){ return m; }
+  });
+  // 再解析 Markdown
   let html = marked.parse(text);
-  html = html.replace(/\$\$([\s\S]+?)\$\$/g, (m, tex) => {
-    try { return '<div>' + katex.renderToString(tex, {throwOnError:false, displayMode:true}) + '</div>'; }
-    catch(e){ return m; }
-  });
-  html = html.replace(/\$([^\$\n]+?)\$/g, (m, tex) => {
-    try { return katex.renderToString(tex, {throwOnError:false}); }
-    catch(e){ return m; }
-  });
+  // 还原 LaTeX 渲染结果
+  html = html.replace(/@@MATH(\d+)@@/g, (m, i) => mathBlocks[parseInt(i)]);
   return html;
 }
 function stripMd(s){
