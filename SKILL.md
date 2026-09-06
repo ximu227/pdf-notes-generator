@@ -22,11 +22,10 @@ python3 <skill_dir>/scripts/extract_pdf.py <pdf_path> --output <output_txt>
 
 读取 `references/prompts.md` 中的完整提示词，将 PDF 文本填入 `{fileText}`，用户额外要求填入 `{extraRequirements}`，然后**由你自己（AI）** 按照提示词要求输出严格的 JSON 笔记数据。
 
-输出的 JSON 必须符合 `references/data-types.md` 中的 `NoteData` 结构：
-- `title`：笔记标题
-- `subject`：自动识别的学科
-- `summary`：课堂小结（1-3 句）
-- `sections`：章节数组，每个含 `level`/`heading`/`cues`/`points`
+根据所选模板输出对应的数据结构（详见 `references/data-types.md`）：
+- **康奈尔 / 重点高亮** → `NoteData`：`title` / `subject` / `date?` / `summary` / `sections[]`（含 `level`/`heading`/`cues`/`points`）
+- **对比表格** → `TableData`：`title` / `subject` / `columns[]` / `rows[]`（含 `dim`/`cells[]`） / `summary`
+- **流程图** → `FlowData`：`title` / `subject` / `steps[]`（含 `t`/`d`） / `done`
 
 生成后按 `references/prompts.md` 末尾的质量检查清单逐项核验。
 
@@ -41,15 +40,20 @@ python3 <skill_dir>/scripts/extract_pdf.py <pdf_path> --output <output_txt>
 
 ### 第 4 步：生成 HTML 笔记页面
 
-读取 `references/templates.md`，按照所选模板的 HTML 结构和 CSS 规范生成完整的 HTML 文件。
+读取 `references/templates.md`，按照所选模板的 HTML 结构生成完整的 HTML 文件。
+
+技术栈（所有模板共用）：
+- **Tailwind CSS**（CDN）：原子化样式
+- **marked.js**（CDN）：Markdown 渲染，要点内容通过 `renderMD()` 输出
+- **KaTeX**（CDN）：LaTeX 公式渲染
 
 关键要求：
-- 页面宽度 1080px，暖米白背景 `#FAF8F5`
+- 页面宽度 1080px，各模板背景遵循 `references/design-system.md`（康奈尔为横线纸，重点高亮为渐变）
 - 配色/字体严格遵循 `references/design-system.md`
-- `**加粗**` 转换为紫色高亮 `<strong>` 样式
-- `$...$` / `$$...$$` LaTeX 公式通过 KaTeX CDN 渲染（在 `<head>` 引入 KaTeX）
-- 所有模板共用 `note-header`（标题+学科标签+渐变条）和 `note-summary`（课堂小结）
-- 将生成的 JSON 数据填入模板，注意 level 2/3 的嵌套层级处理
+- 要点内容用 `<div class="md">`（或 `.md.compact` / `.md.hl`）包裹，通过 marked.js 渲染，不要手动转换 `**加粗**`
+- `$...$` / `$$...$$` LaTeX 公式在 `renderMD()` 中通过 KaTeX 渲染
+- 康奈尔模板表头含课程/日期填写栏，流程图使用 7 色循环步骤卡片，重点高亮的加粗为渐变背景高亮
+- 将生成的 JSON 数据填入模板，注意各模板数据结构不同（NoteData / TableData / FlowData）
 
 将 HTML 写入工作目录的临时文件，如 `note_cornell.html`。
 
@@ -67,7 +71,7 @@ python3 <skill_dir>/scripts/render_notes.py <html_path> <output_png> --width 108
 | 文件 | 用途 | 何时读取 |
 |---|---|---|
 | `references/prompts.md` | 完整提示词 + 质量检查清单 | 第 2 步生成笔记前 |
-| `references/data-types.md` | NoteData 结构 + 模板类型 + 选择策略 | 第 2、3 步 |
+| `references/data-types.md` | NoteData/TableData/FlowData 结构 + 模板类型 + 选择策略 | 第 2、3 步 |
 | `references/design-system.md` | 配色/字体/圆角/高亮样式 | 第 4 步生成 HTML 时 |
 | `references/templates.md` | 4 种模板的 HTML/CSS 完整规范 | 第 4 步生成 HTML 时 |
 | `scripts/extract_pdf.py` | PDF 文本提取 | 第 1 步 |
@@ -82,3 +86,4 @@ python3 <skill_dir>/scripts/render_notes.py <html_path> <output_png> --width 108
 5. **长 PDF 处理**：超过 2 万字时，可先生成大纲再分章节生成，或提示用户文件过长
 6. **截图失败兜底**：如果 playwright 渲染失败，检查 HTML 是否有语法错误，或增加 `--wait` 时间
 7. **学科识别**：必须从标准学科名中选择（语文/数学/英语/物理/化学/生物/历史/地理/政治/综合）
+8. **客户端渲染等待**：HTML 使用 marked.js + KaTeX 客户端渲染，截图前需等待至少 1500ms，公式较多时增加 `--wait 2500`
