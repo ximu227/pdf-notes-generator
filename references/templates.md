@@ -25,7 +25,7 @@ tailwind.config = {
 }
 </script>
 <style>
-  body { font-family:'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans SC',system-ui,sans-serif; background:#FAF8F5; color:#1C1B1F; margin:0; }
+  body { font-family:'Times New Roman','Microsoft YaHei',serif; background:#FAF8F5; color:#1C1B1F; margin:0; }
   .note-page { width:100%; min-height:600px; box-sizing:border-box; }
   .md { font-size:14px; line-height:1.75; }
   .md p { margin:6px 0; }
@@ -40,7 +40,7 @@ tailwind.config = {
   .md ol { list-style:decimal; margin:6px 0; padding-left:22px; }
   .md ol li { line-height:1.7; margin:2px 0; }
   .md blockquote { border-left:2px solid rgba(244,114,182,.6); padding-left:12px; margin:6px 0; color:rgba(28,27,31,.8); font-style:italic; }
-  .md code { background:rgba(120,113,108,.15); border-radius:4px; padding:1px 4px; font-size:12.5px; font-family:ui-monospace,monospace; color:#1C1B1F; }
+  .md code { background:rgba(120,113,108,.15); border-radius:4px; padding:1px 4px; font-size:12.5px; font-family:'Times New Roman','Microsoft YaHei',serif; color:#1C1B1F; }
   .md .katex-display { margin:8px 0; overflow-x:auto; }
 </style>
 </head>
@@ -124,8 +124,8 @@ function stripMd(s){
         <h1 class="text-3xl font-bold text-ink break-words leading-tight">{title}</h1>
       </div>
       <div class="text-right text-xs text-muted space-y-0.5 shrink-0">
-        <div>课程：<span class="ml-1 font-mono text-ink border-b border-dotted border-muted inline-block min-w-[100px]">{subject}</span></div>
-        <div>日期：<span class="ml-1 font-mono text-ink border-b border-dotted border-muted inline-block min-w-[100px]">{date}</span></div>
+        <div>课程：<span class="ml-1 text-ink border-b border-dotted border-muted inline-block min-w-[100px]">{subject}</span></div>
+        <div>日期：<span class="ml-1 text-ink border-b border-dotted border-muted inline-block min-w-[100px]">{date}</span></div>
       </div>
     </div>
 
