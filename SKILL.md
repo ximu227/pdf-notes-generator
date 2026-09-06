@@ -87,3 +87,4 @@ python3 <skill_dir>/scripts/render_notes.py <html_path> <output_png> --width 108
 6. **截图失败兜底**：如果 playwright 渲染失败，检查 HTML 是否有语法错误，或增加 `--wait` 时间
 7. **学科识别**：必须从标准学科名中选择（语文/数学/英语/物理/化学/生物/历史/地理/政治/综合）
 8. **客户端渲染等待**：HTML 使用 marked.js + KaTeX 客户端渲染，截图前需等待至少 1500ms，公式较多时增加 `--wait 2500`
+9. **字体规范（强制）**：汉字使用 `Microsoft YaHei`（微软雅黑），英文和数字使用 `Times New Roman`，数学公式使用 KaTeX 默认字体。CSS 写法：`font-family:'Times New Roman','Microsoft YaHei',serif`（Times New Roman 在前匹配英文数字，中文回退到微软雅黑）。禁止使用 `font-mono`/`ui-monospace` 等覆盖数字字体。

@@ -42,14 +42,20 @@ tailwind.config = {
 ## 字体排版
 
 ```css
-font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
+font-family: 'Times New Roman', 'Microsoft YaHei', serif;
 ```
 
-- 标题：600-700 粗体，行高 1.2
-- 副标题/标签：500 medium，letter-spacing 0.15em，全大写（tracking-widest uppercase）
+**字体规则（强制）**：
+- **汉字**：使用 `Microsoft YaHei`（微软雅黑）
+- **英文和数字**：使用 `Times New Roman`
+- **数学公式**：使用 KaTeX 默认字体（不受 body font-family 影响）
+- **实现原理**：CSS 按 `font-family` 顺序匹配字符，英文字符和数字命中 Times New Roman，中文字符在 Times New Roman 中无对应字形，回退到 Microsoft YaHei
+
+- 标题：600 粗体，行高 1.2
+- 副标题：500 medium，letter-spacing 0.15em，全大写
 - 正文：400 regular，行高 1.7
-- 数字：tabular-nums，等宽
-- 课程/日期填写：font-mono + border-dotted 下划线
+- 数字：Times New Roman 自带衬线风格，无需额外 tabular-nums
+- 课程/日期填写：不要使用 font-mono，数字需用 Times New Roman
 
 ## 圆角与间距
 
@@ -136,3 +142,4 @@ h-1 w-24 rounded-full，品牌渐变背景
 - ❌ 浅灰底 + 蓝按钮的常规 SaaS 配色
 - ❌ 笔记中出现"AI 生成"字样
 - ❌ 重点高亮模板中使用普通紫色加粗（必须用渐变背景高亮 .md.hl）
+- ❌ 使用 font-mono / ui-monospace 等覆盖数字字体（数字必须用 Times New Roman）
